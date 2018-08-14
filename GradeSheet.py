@@ -5,7 +5,7 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.pagesizes import A4
-import csv
+import os
 
 ''' 
 WARNING: DO NOT FIELDS OTHER THAN MENTIONED IN THE EDIT SECTION. EDITING ANY OTHER SECTION MAY RESULT IN FAILURE 
@@ -58,20 +58,24 @@ credits_array = []
 total_credits = 0
 serial_number = 1
 
-for line in open("CSE.csv"):
+file_name = input("Enter file path:").strip()
+
+for line in open(file_name):
 
     line_no += 1
 
     if line_no <= 4:
         print("Acquiring Metadata\n")
     else:
-        print("Generating certificate of %d" % (line_no - 4));
+        print("Generating certificate of %d" % (line_no - 4))
 
     var = line.split(',')
 
     if line_no == 1:
         for x in range(3):
             main_details.append(var[x])
+        if os.path.exists("Outputs/"+main_details[0] + " - " + main_details[1]) is False:
+            os.mkdir('Outputs/' + main_details[0] + " - " + main_details[1], 0o755)
         continue
 
     if line_no == 2:
@@ -115,9 +119,9 @@ for line in open("CSE.csv"):
     branch = main_details[0]
     examination = main_details[1]
     month = main_details[2]
-    name = var[2+noOfSubjects+1]
-    father_name = var[2+noOfSubjects+2]
-    mother_name = var[2+noOfSubjects+3]
+    name = var[noOfSubjects+3]
+    father_name = var[noOfSubjects+4]
+    mother_name = var[noOfSubjects+5]
 
     c.drawString(83, 133.67, str(serial_number))
     c.drawString(110, 154, examination)
@@ -181,7 +185,9 @@ for line in open("CSE.csv"):
 
     print("Generating PDF")
 
-    outputStream = open("Outputs/cse/" + rollno + ".pdf", "wb")
+    path = "Outputs/" + main_details[0] + " - " + main_details[1] + "/" + rollno + ".pdf"
+
+    outputStream = open(path, "wb")
 
     output.write(outputStream)
 
